@@ -15,8 +15,8 @@ export default function Home(): JSX.Element {
       {/* ----- HERO SECTION (Black/Grey Panaversity Style) ----- */}
       <header className={styles.heroBanner}>
         <div className="container">
-          <h1 className={styles.heroTitle}>Start Your AI-Native <br/>Robotics Journey</h1>
-          <p className={styles.heroSubtitle}>{siteConfig.tagline}</p>
+          <h1 className={styles.heroTitle}>Physical AI Humanoid Robotics Textbook</h1>
+          <p className={styles.heroSubtitle}>This open textbook is designed for students, engineers, and researchers who want hands-on learning with modern tools.</p>
 
           <div className={styles.heroButtons}>
             <Link className="button button--primary button--lg" to="docs/intro">
