@@ -1,0 +1,126 @@
+# API Contract: Python Agent to ROS Controller Bridge
+
+openapi: 3.0.0
+info:
+  title: Python Agent to ROS Controller Bridge
+  description: Specification for bridging Python-based AI agents to ROS-based robot controllers
+  version: 1.0.0
+
+# This is a conceptual contract representing the communication patterns
+# between Python agents and ROS controllers, not an actual HTTP API
+
+components:
+  schemas:
+    CommandMessage:
+      type: object
+      description: Command sent from Python agent to ROS controller
+      properties:
+        type:
+          type: string
+          enum: [move, rotate, stop, custom]
+          description: Type of command
+        parameters:
+          type: object
+          description: Command-specific parameters
+          additionalProperties: true
+        timestamp:
+          type: string
+          format: date-time
+          description: When the command was issued
+        agent_id:
+          type: string
+          description: Identifier of the Python agent
+
+    SensorMessage:
+      type: object
+      description: Sensor feedback from ROS controller to Python agent
+      properties:
+        sensor_type:
+          type: string
+          description: Type of sensor (lidar, camera, imu, etc.)
+        data:
+          type: object
+          description: Sensor-specific data
+          additionalProperties: true
+        timestamp:
+          type: string
+          format: date-time
+          description: When the data was captured
+        frame_id:
+          type: string
+          description: Coordinate frame of the sensor data
+
+    FeedbackMessage:
+      type: object
+      description: Execution feedback from ROS controller to Python agent
+      properties:
+        command_id:
+          type: string
+          description: Identifier of the original command
+        status:
+          type: string
+          enum: [executing, succeeded, failed, canceled]
+          description: Execution status
+        progress:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Progress percentage for long-running commands
+        error_message:
+          type: string
+          description: Error details if status is failed
+
+paths:
+  # These represent ROS topics rather than HTTP endpoints
+  /agent_commands:
+    description: Topic for Python agents to send commands to controllers
+    publish:
+      summary: Send command from Python agent to ROS controller
+      requestBody:
+        description: Command message from Python agent
+        content:
+          application/msgpack: # Using msgpack as a placeholder for ROS msg format
+            schema:
+              $ref: '#/components/schemas/CommandMessage'
+
+  /sensor_feedback:
+    description: Topic for ROS controllers to send sensor data to Python agents
+    subscribe:
+      summary: Receive sensor feedback from ROS controller
+      responses:
+        '200':
+          description: Sensor data from ROS controller
+          content:
+            application/msgpack: # Using msgpack as a placeholder for ROS msg format
+              schema:
+                $ref: '#/components/schemas/SensorMessage'
+
+  /execution_feedback:
+    description: Topic for ROS controllers to send execution feedback to Python agents
+    subscribe:
+      summary: Receive execution feedback from ROS controller
+      responses:
+        '200':
+          description: Execution feedback from ROS controller
+          content:
+            application/msgpack: # Using msgpack as a placeholder for ROS msg format
+              schema:
+                $ref: '#/components/schemas/FeedbackMessage'
+
+# Quality of Service profiles for different types of communication
+x_qos_profiles:
+  sensor_data:
+    reliability: best_effort
+    durability: volatile
+    history: keep_last
+    depth: 5
+  command_data:
+    reliability: reliable
+    durability: volatile
+    history: keep_last
+    depth: 10
+  feedback_data:
+    reliability: reliable
+    durability: volatile
+    history: keep_last
+    depth: 5
