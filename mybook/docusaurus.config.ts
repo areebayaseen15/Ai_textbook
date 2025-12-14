@@ -3,7 +3,7 @@ import type { Config } from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'Physical Ai Humanoid Textbook',
+  title: 'Physical Ai Humanoid Robotics Textbook',
   tagline: 'Dinosaurs are cool',
   favicon: 'img/favicon.webp',
 
