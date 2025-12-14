@@ -7,7 +7,7 @@ import type * as Preset from '@docusaurus/preset-classic';
 const config: Config = {
   title: 'My Site',
   tagline: 'Dinosaurs are cool',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/favicon.webp',
 
   // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
   future: {
@@ -78,18 +78,20 @@ const config: Config = {
       title: 'My Site',
       logo: {
         alt: 'My Site Logo',
-        src: 'img/logo.svg',
+        src: 'img/logo.webp',
       },
       items: [
         {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'TextBook',
         },
-        {to: '/blog', label: 'Blog', position: 'left'},
+        {to: '/docs/Course-Overview/Course%20Overview', label: 'Course-Overview', position: 'left'},
+         {to: '/docs/Learning%20Path/weekly-schedule', label: 'Learning Path', position: 'left'},
+         {to: '/docs/category/chapter-1-introduction-to-ros2', label: 'Modules', position: 'left'},
         {
-          href: 'https://github.com/facebook/docusaurus',
+          href: 'https://github.com/areebayaseen15/Ai_textbook/',
           label: 'GitHub',
           position: 'right',
         },
@@ -116,24 +118,32 @@ const config: Config = {
             },
             {
               label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
+              href: '#',
             },
             {
               label: 'X',
-              href: 'https://x.com/docusaurus',
+              href: '#',
             },
+              {
+                label: 'LinkedIn',
+                href: 'https://www.linkedin.com/in/areeba-yaseen-6523552b5/',
+              }.
           ],
         },
         {
           title: 'More',
           items: [
             {
-              label: 'Blog',
-              to: '/blog',
+              label: 'Learning Path',
+              to: '/docs/Learning%20Path/weekly-schedule',
+            },
+              {
+              label: 'Resources',
+              to: 'docs/Resources/Refrences',
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: https://github.com/areebayaseen15/Ai_textbook/',
             },
           ],
         },
