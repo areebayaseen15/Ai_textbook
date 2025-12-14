@@ -136,7 +136,7 @@ export default function Home(): JSX.Element {
         </section>
 
         {/* ----- CTA ----- */}
-        <section className={styles.ctaSection}>
+        {/* <section className={styles.ctaSection}>
           <div className="container">
             <div className={styles.ctaContent}>
               <h2>Start Your AI-Native Robotics Journey</h2>
@@ -155,7 +155,7 @@ export default function Home(): JSX.Element {
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
 
       </main>
     </Layout>
