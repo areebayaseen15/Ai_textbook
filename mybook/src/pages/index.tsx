@@ -2,6 +2,7 @@ import React, { JSX } from "react";
 import Layout from "@theme/Layout";
 import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
+import SimpleChatUI from '@site/src/components/SimpleChatUI'; // Import our chat UI
 import styles from "./index.module.css";
 
 export default function Home(): JSX.Element {
@@ -158,6 +159,8 @@ export default function Home(): JSX.Element {
         </section> */}
 
       </main>
+      {/* Floating Chat Widget */}
+      <SimpleChatUI />
     </Layout>
   );
 }
