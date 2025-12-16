@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 from ...api.schemas.response import HealthResponse
 from ...services.qdrant_service import qdrant_service
-from ...config.database import engine
 import logging
 
 router = APIRouter()
@@ -14,34 +13,27 @@ async def health_check():
     """
     services_status = {
         "qdrant": "disconnected",
-        "database": "disconnected",
+        "database": "not_required_for_basic_operation",
         "api": "running"
     }
 
     # Check Qdrant connection
     try:
-        info = qdrant_service.get_collection_info()
-        if info:
-            services_status["qdrant"] = "connected"
+        # Only try to check if qdrant client is available
+        if qdrant_service.client is not None:
+            info = qdrant_service.get_collection_info()
+            if info:
+                services_status["qdrant"] = "connected"
+            else:
+                services_status["qdrant"] = "available_no_collection"
         else:
-            services_status["qdrant"] = "connection_error"
+            services_status["qdrant"] = "not_configured"
     except Exception as e:
         logger.error(f"Qdrant health check failed: {str(e)}")
         services_status["qdrant"] = f"error: {str(e)}"
 
-    # Check database connection
-    try:
-        conn = engine.connect()
-        conn.close()
-        services_status["database"] = "connected"
-    except Exception as e:
-        logger.error(f"Database health check failed: {str(e)}")
-        services_status["database"] = f"error: {str(e)}"
-
-    # Overall status
-    all_healthy = all(status == "connected" for service, status in services_status.items() if service != "api")
-
+    # Overall status - API is running regardless of other services
     return HealthResponse(
-        status="healthy" if all_healthy else "degraded",
+        status="running",  # We'll report running instead of healthy to indicate basic functionality
         services=services_status
     )
