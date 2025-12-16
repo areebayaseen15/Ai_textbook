@@ -1,0 +1,218 @@
+openapi: 3.0.3
+info:
+  title: RAG Chatbot API for Physical AI & Humanoid Robotics Book
+  description: API for querying the Physical AI & Humanoid Robotics book with RAG capabilities
+  version: 1.0.0
+  contact:
+    name: RAG Chatbot Team
+    email: team@example.com
+
+servers:
+  - url: http://localhost:8000
+    description: Development server
+  - url: https://api.rag-chatbot.example.com
+    description: Production server
+
+paths:
+  /api/chat:
+    post:
+      summary: Submit a question to the RAG system
+      description: Process a user question using either BOOK MODE or SELECTION MODE
+      operationId: submitQuestion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionRequest'
+            example:
+              content: "What are the key principles of physical AI?"
+              mode: "BOOK"
+              selectedText: null
+      responses:
+        '200':
+          description: Successful response from the RAG system
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionResponse'
+              example:
+                content: "Physical AI combines principles of robotics, machine learning, and physical interaction..."
+                citations:
+                  - chapter: "Chapter 3"
+                    section: "3.1 Principles"
+                    url: "https://ai-textbook-orcin.vercel.app/chapter-3"
+                confidence: 0.95
+        '404':
+          description: No relevant content found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              example:
+                error: "The answer is not found in the selected text."
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/ingest:
+    post:
+      summary: Ingest book content into the system
+      description: Scrape and process book content from the Vercel deployment
+      operationId: ingestBookContent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IngestionRequest'
+      responses:
+        '200':
+          description: Content ingestion successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IngestionResponse'
+        '400':
+          description: Invalid URL or content format
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/health:
+    get:
+      summary: Check system health
+      description: Verify that all services are operational
+      operationId: healthCheck
+      responses:
+        '200':
+          description: System is healthy
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+
+components:
+  schemas:
+    QuestionRequest:
+      type: object
+      required:
+        - content
+        - mode
+      properties:
+        content:
+          type: string
+          description: The question text from the user
+          example: "What are the key principles of physical AI?"
+        mode:
+          type: string
+          enum: [BOOK, SELECTION]
+          description: The RAG mode to use for the query
+        selectedText:
+          type: string
+          description: Text provided by user for SELECTION MODE (required when mode is SELECTION)
+          example: "Physical AI is the integration of artificial intelligence with physical systems..."
+
+    QuestionResponse:
+      type: object
+      required:
+        - content
+      properties:
+        content:
+          type: string
+          description: The system's response to the question
+          example: "Physical AI combines principles of robotics, machine learning, and physical interaction..."
+        citations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Citation'
+          description: References to source materials
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Confidence score for the response
+          example: 0.95
+
+    Citation:
+      type: object
+      properties:
+        chapter:
+          type: string
+          description: Chapter reference
+          example: "Chapter 3"
+        section:
+          type: string
+          description: Section reference
+          example: "3.1 Principles"
+        url:
+          type: string
+          format: uri
+          description: URL reference to the content
+          example: "https://ai-textbook-orcin.vercel.app/chapter-3"
+
+    ErrorResponse:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: string
+          description: Error message
+          example: "The answer is not found in the selected text."
+
+    IngestionRequest:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          format: uri
+          description: URL of the book content to ingest
+          example: "https://ai-textbook-orcin.vercel.app/"
+
+    IngestionResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Status of the ingestion process
+          example: "success"
+        chunksProcessed:
+          type: integer
+          description: Number of content chunks processed
+          example: 45
+        message:
+          type: string
+          description: Additional information about the process
+          example: "Successfully ingested book content with 45 chunks"
+
+    HealthResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          description: Overall health status
+          example: "healthy"
+        services:
+          type: object
+          description: Status of individual services
+          properties:
+            qdrant:
+              type: string
+              description: Qdrant vector database status
+              example: "connected"
+            database:
+              type: string
+              description: Database connection status
+              example: "connected"
+            api:
+              type: string
+              description: API service status
+              example: "running"
